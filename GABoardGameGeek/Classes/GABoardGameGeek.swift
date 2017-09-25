@@ -24,7 +24,7 @@ public class GABoardGameGeek {
      
      - NOTE: The closure executes on the main thread by default.
      */
-    public func getUserCollection(username: String, brief: Bool = false, stats: Bool = false, timeoutSeconds: Int = 90, closure: ApiResult<[CollectionBoardGame]> -> () ) {
+    public func getUserCollection(username: String, brief: Bool = false, stats: Bool = false, timeoutSeconds: Int = 90, closure: @escaping (ApiResult<[CollectionBoardGame]>) -> () ) {
 
         // Set up the initial request parameters
         var requestParams = [String: String]()
@@ -33,8 +33,8 @@ public class GABoardGameGeek {
         requestParams["stats"] = (stats ? "1" : "0")
 
         // Make the network call to get the collection.
-        let endTime = NSDate().dateByAddingTimeInterval(Double(timeoutSeconds))
-        api.request(self.collectionUrl, params: requestParams, rootElement: "items", childElement: "item", retryUntil: endTime, closure: closure)
+        let endTime = NSDate().addingTimeInterval(Double(timeoutSeconds))
+        api.request(url: self.collectionUrl, params: requestParams, rootElement: "items", childElement: "item", retryUntil: endTime, closure: closure)
     }
 
     // MARK: - Items
@@ -49,15 +49,15 @@ public class GABoardGameGeek {
 
      - NOTE: The closure executes on the main thread by default.
      */
-    public func getGamesById(ids: [Int], stats: Bool = false, closure: ApiResult<[BoardGame]> -> () ) {
+    public func getGamesById(ids: [Int], stats: Bool = false, closure: @escaping (ApiResult<[BoardGame]>) -> () ) {
 
         // Set up the request parameters
         var requestParams = [String: String]()
-        requestParams["id"] = ids.map { String($0) }.joinWithSeparator(",")
+        requestParams["id"] = ids.map { String($0) }.joined(separator: ",")
         requestParams["stats"] = (stats ? "1" : "0")
 
         // Make the request
-        api.request(self.itemUrl, params: requestParams, rootElement: "items", childElement: "item", closure: closure)
+        api.request(url: self.itemUrl, params: requestParams, rootElement: "items", childElement: "item", closure: closure)
     }
 
     /**
@@ -70,10 +70,10 @@ public class GABoardGameGeek {
 
      - NOTE: The closure executes on the main thread by default.
      */
-    public func getGameById(id: Int, stats: Bool = false, closure: ApiResult<BoardGame> -> () ) {
+    public func getGameById(id: Int, stats: Bool = false, closure: @escaping (ApiResult<BoardGame>) -> () ) {
 
         // Call the getter that takes an array, and validate that there was exactly one result
-        getGamesById([id], stats: stats) { result in
+        getGamesById(ids: [id], stats: stats) { result in
             switch(result) {
             case .Success(let gameCollection):
                 if(gameCollection.count == 1) {
@@ -89,7 +89,7 @@ public class GABoardGameGeek {
 
     // MARK: - Search
 
-    public func searchFor(query: String, searchType: String? = nil, exactMatch: Bool = false, closure: ApiResult<[SearchResult]> -> () ) {
+    public func searchFor(query: String, searchType: String? = nil, exactMatch: Bool = false, closure: @escaping (ApiResult<[SearchResult]>) -> () ) {
 
         // Set up the request parameters
         var requestParams = [String: String]()
@@ -101,7 +101,7 @@ public class GABoardGameGeek {
         requestParams["exact"] = (exactMatch ? "1" : "0")
 
         // Make the request
-        api.request(self.searchUrl, params: requestParams, rootElement: "items", childElement: "item", closure: closure)
+        api.request(url: self.searchUrl, params: requestParams, rootElement: "items", childElement: "item", closure: closure)
     }
 
 

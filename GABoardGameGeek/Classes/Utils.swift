@@ -11,12 +11,12 @@ import Foundation
 internal extension String {
     /// Get a string encoded for URL Requests
     var URLQueryString: String {
-        return self.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        return self.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
     }
 
     /// Get a string with whitespace trimmed off
     var trimWhitespace: String {
-        return self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        return self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
     }
 }
 
@@ -33,7 +33,7 @@ internal extension String {
         if sortIndex <= 1 || sortIndex > self.characters.count {
             return self
         } else {
-            return self.substringFromIndex(self.startIndex.advancedBy(sortIndex - 1))
+            return self.substringFrom(self.startIndex.advanced(sortIndex - 1))
         }
     }
 }

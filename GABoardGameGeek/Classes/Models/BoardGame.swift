@@ -80,7 +80,7 @@ public struct BoardGame {
     /// The name that this game should be sorted on. For example, "The Gallerist" with a `sortIndex` of 5
     /// will be sorted simply as "Gallerist".
     public var sortName: String {
-        get { return name.getSortString(sortIndex) }
+        get { return name.getSortString(sortIndex: sortIndex) }
     }
 
     /// The `NSURL` to retrieve the game's image.

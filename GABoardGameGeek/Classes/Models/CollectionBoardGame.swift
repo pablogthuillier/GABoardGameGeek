@@ -66,7 +66,7 @@ public struct CollectionBoardGame {
 
     /// The sort-name of this game. A calculated parameter that indexes into the name by the sortIndex
     public var sortName: String {
-        get { return name.getSortString(sortIndex) }
+        get { return name.getSortString(sortIndex: sortIndex) }
     }
 
     /// The `NSURL` to retrieve the game's image.

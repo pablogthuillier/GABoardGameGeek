@@ -141,7 +141,7 @@ extension BoardGame: XMLIndexerDeserializable {
      */
     public static func deserialize(node: XMLIndexer) throws -> BoardGame {
         guard try node.element != nil &&
-            node["name"].withAttr("type", "primary").element != nil &&
+            node["name"].withAttribute("type", "primary").element != nil &&
             node["yearpublished"].element != nil &&
             node["minplayers"].element != nil &&
             node["maxplayers"].element != nil &&
@@ -149,15 +149,15 @@ extension BoardGame: XMLIndexerDeserializable {
             node["minplaytime"].element != nil &&
             node["maxplaytime"].element != nil &&
             node["minage"].element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+                throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         do {
             return try BoardGame(
-                objectId: node.element!.attribute("id"),
-                type: node.element!.attribute("type"),
-                name: node["name"].withAttr("type", "primary").element!.attribute("value")!,
-                sortIndex: node["name"].withAttr("type", "primary").element!.attribute("sortindex"),
+                objectId: node.element!.attribute(attribute: "id"),
+                type: node.element!.attribute(attribute: "type"),
+                name: node["name"].withAttribute("type", "primary").element!.attribute("value")!,
+                sortIndex: node["name"].withAttribute("type", "primary").element!.attribute("sortindex"),
                 imagePath: node["image"].value(),
                 thumbnailPath: node["thumbnail"].value(),
                 description: (node["description"].value() as String).trimWhitespace,
@@ -178,7 +178,7 @@ extension BoardGame: XMLIndexerDeserializable {
             // If any errors occur while parsing this game, throw them as a single exception along
             // with the XML that the game deserializes from. This makes it much easier to track down
             // which particular field might be failing.
-            throw XMLDeserializationError.TypeConversionFailed(type: "BoardGame", element: node.element!)
+            throw XMLDeserializationError.typeConversionFailed(type: "BoardGame", element: node.element!)
         }
     }
 }
@@ -227,10 +227,10 @@ extension SuggestedPlayersPoll: XMLIndexerDeserializable {
     */
     public static func deserialize(node: XMLIndexer) throws -> SuggestedPlayersPoll {
         guard node.element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
-        let totalVotes = try node.element!.attribute("totalvotes") as Int
+        let totalVotes = try node.element!.attribute(attribute: "totalvotes") as Int
         var resultDict: [String: [PollResult]]? = nil
 
         // Only attempt to parse this if
@@ -283,11 +283,11 @@ extension SuggestedPlayeragePoll: XMLIndexerDeserializable {
     */
     public static func deserialize(node: XMLIndexer) throws -> SuggestedPlayeragePoll {
         guard node.element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         return try SuggestedPlayeragePoll(
-            totalVotes: node.element!.attribute("totalvotes"),
+            totalVotes: node.element!.attribute(attribute: "totalvotes"),
             results: node["results"]["result"].value()
         )
     }
@@ -319,11 +319,11 @@ extension LanguageDependencePoll: XMLIndexerDeserializable {
     */
     public static func deserialize(node: XMLIndexer) throws -> LanguageDependencePoll {
         guard node.element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         return try LanguageDependencePoll(
-            totalVotes: node.element!.attribute("totalvotes"),
+            totalVotes: node.element!.attribute(attribute: "totalvotes"),
             results: node["results"]["result"].value()
         )
     }
@@ -349,9 +349,9 @@ extension PollResult: XMLElementDeserializable {
     */
     public static func deserialize(element: XMLElement) throws -> PollResult {
         return try PollResult(
-            level: element.attribute("level"),
-            value: element.attribute("value"),
-            numVotes: element.attribute("numvotes")
+            level: element.attribute(attribute: "level"),
+            value: element.attribute(attribute: "value"),
+            numVotes: element.attribute(attribute: "numvotes")
         )
     }
 }
@@ -393,18 +393,18 @@ extension Statistics: XMLIndexerDeserializable {
     */
     public static func deserialize(node: XMLIndexer) throws -> Statistics {
         return try Statistics(
-            usersRated: node["usersrated"].element!.attribute("value"),
-            average: node["average"].element!.attribute("value"),
-            bayesAverage: node["bayesaverage"].element!.attribute("value"),
-            stdDev: node["stddev"].element!.attribute("value"),
-            median: node["median"].element!.attribute("value"),
-            owned: node["owned"].element!.attribute("value"),
-            trading: node["trading"].element!.attribute("value"),
-            wanting: node["wanting"].element!.attribute("value"),
-            wishing: node["wishing"].element!.attribute("value"),
-            numComments: node["numcomments"].element!.attribute("value"),
-            numWeights: node["numweights"].element!.attribute("value"),
-            averageWeight: node["averageweight"].element!.attribute("value"),
+            usersRated: node["usersrated"].element!.attribute(attribute: "value"),
+            average: node["average"].element!.attribute(attribute: "value"),
+            bayesAverage: node["bayesaverage"].element!.attribute(attribute: "value"),
+            stdDev: node["stddev"].element!.attribute(attribute: "value"),
+            median: node["median"].element!.attribute(attribute: "value"),
+            owned: node["owned"].element!.attribute(attribute: "value"),
+            trading: node["trading"].element!.attribute(attribute: "value"),
+            wanting: node["wanting"].element!.attribute(attribute: "value"),
+            wishing: node["wishing"].element!.attribute(attribute: "value"),
+            numComments: node["numcomments"].element!.attribute(attribute: "value"),
+            numWeights: node["numweights"].element!.attribute(attribute: "value"),
+            averageWeight: node["averageweight"].element!.attribute(attribute: "value"),
             ranks: node["ranks"]["rank"].value()
         )
     }
@@ -430,10 +430,10 @@ extension BoardGameLink: XMLElementDeserializable {
     */
     public static func deserialize(element: XMLElement) throws -> BoardGameLink {
         return try BoardGameLink(
-            type: element.attribute("type"),
-            id: element.attribute("id"),
-            value: element.attribute("value"),
-            inbound: element.attribute("inbound")
+            type: element.attribute(attribute: "type"),
+            id: element.attribute(attribute: "id"),
+            value: element.attribute(attribute: "value"),
+            inbound: element.attribute(attribute: "inbound")
         )
     }
 }
@@ -456,12 +456,12 @@ extension GameRank: XMLElementDeserializable {
      */
     public static func deserialize(element: XMLElement) throws -> GameRank {
         return try GameRank(
-            type: element.attribute("type"),
-            id: element.attribute("id"),
-            name: element.attribute("name"),
-            friendlyName: element.attribute("friendlyname"),
-            value: (element.attribute("value") as Int?) ?? 0,
-            bayesAverage: (element.attribute("bayesaverage") as Double?) ?? 0.0
+            type: element.attribute(attribute: "type"),
+            id: element.attribute(attribute: "id"),
+            name: element.attribute(attribute: "name"),
+            friendlyName: element.attribute(attribute: "friendlyname"),
+            value: (element.attribute(attribute: "value") as Int?) ?? 0,
+            bayesAverage: (element.attribute(attribute: "bayesaverage") as Double?) ?? 0.0
         )
     }
 }

@@ -47,14 +47,14 @@ extension CollectionBoardGame: XMLIndexerDeserializable {
      */
     public static func deserialize(node: XMLIndexer) throws -> CollectionBoardGame {
         guard node.element != nil && node["name"].element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         do {
             return try CollectionBoardGame(
-                objectId: node.element!.attribute("objectid"),
+                objectId: node.element!.attribute(attribute: "objectid"),
                 name: node["name"].value(),
-                sortIndex: node["name"].element!.attribute("sortindex"),
+                sortIndex: node["name"].element!.attribute(attribute: "sortindex"),
                 status: node["status"].value(),
                 stats: node["stats"].value(),
                 yearPublished: node["yearpublished"].value(),
@@ -68,7 +68,7 @@ extension CollectionBoardGame: XMLIndexerDeserializable {
             // If any errors occur while parsing this game, throw them as a single exception along
             // with the XML that the game deserializes from. This makes it much easier to track down
             // which particular field might be failing.
-            throw XMLDeserializationError.TypeConversionFailed(type: "CollectionBoardGame", element: node.element!)
+            throw XMLDeserializationError.typeConversionFailed(type: "CollectionBoardGame", element: node.element!)
         }
     }
 }
@@ -91,16 +91,16 @@ extension CollectionStatus: XMLElementDeserializable {
      */
     public static func deserialize(element: XMLElement) throws -> CollectionStatus {
         return try CollectionStatus(
-            owned: element.attribute("own"),
-            prevOwned: element.attribute("prevowned"),
-            wantToBuy: element.attribute("wanttobuy"),
-            wantToPlay: element.attribute("wanttoplay"),
-            preOrdered: element.attribute("preordered"),
-            wantInTrade: element.attribute("want"),
-            forTrade: element.attribute("fortrade"),
-            wishList: element.attribute("wishlist"),
-            wishListPriority: element.attribute("wishlistpriority"),
-            lastModified: element.attribute("lastmodified")
+            owned: element.attribute(attribute: "own"),
+            prevOwned: element.attribute(attribute: "prevowned"),
+            wantToBuy: element.attribute(attribute: "wanttobuy"),
+            wantToPlay: element.attribute(attribute: "wanttoplay"),
+            preOrdered: element.attribute(attribute: "preordered"),
+            wantInTrade: element.attribute(attribute: "want"),
+            forTrade: element.attribute(attribute: "fortrade"),
+            wishList: element.attribute(attribute: "wishlist"),
+            wishListPriority: element.attribute(attribute: "wishlistpriority"),
+            lastModified: element.attribute(attribute: "lastmodified")
         )
     }
 }
@@ -128,16 +128,16 @@ extension CollectionStats: XMLIndexerDeserializable {
      */
     public static func deserialize(node: XMLIndexer) throws -> CollectionStats {
         guard let element = node.element else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         return try CollectionStats(
-            minPlayers: element.attribute("minplayers"),
-            maxPlayers: element.attribute("maxplayers"),
-            minPlaytime: element.attribute("minplaytime"),
-            maxPlaytime: element.attribute("maxplaytime"),
-            playingTime: element.attribute("playingtime"),
-            numOwned: element.attribute("numowned"),
+            minPlayers: element.attribute(attribute: "minplayers"),
+            maxPlayers: element.attribute(attribute: "maxplayers"),
+            minPlaytime: element.attribute(attribute: "minplaytime"),
+            maxPlaytime: element.attribute(attribute: "maxplaytime"),
+            playingTime: element.attribute(attribute: "playingtime"),
+            numOwned: element.attribute(attribute: "numowned"),
             rating: node["rating"].value()
         )
     }
@@ -178,16 +178,16 @@ extension CollectionRating: XMLIndexerDeserializable {
      */
     public static func deserialize(node: XMLIndexer) throws -> CollectionRating {
         guard node["average"].element != nil && node["bayesaverage"].element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         return try CollectionRating(
-            userRating: node.element?.attribute("value"),
-            usersRated: node["usersrated"].element?.attribute("value"),
-            averageRating: node["average"].element!.attribute("value"),
-            bayesAverageRating: node["bayesaverage"].element!.attribute("value"),
-            stdDev: node["stddev"].element?.attribute("value"),
-            median: node["median"].element?.attribute("value"),
+            userRating: node.element?.attribute(attribute: "value"),
+            usersRated: node["usersrated"].element?.attribute(attribute: "value"),
+            averageRating: node["average"].element!.attribute(attribute: "value"),
+            bayesAverageRating: node["bayesaverage"].element!.attribute(attribute: "value"),
+            stdDev: node["stddev"].element?.attribute(attribute: "value"),
+            median: node["median"].element?.attribute(attribute: "value"),
             ranks: node["ranks"]["rank"].value()
         )
     }

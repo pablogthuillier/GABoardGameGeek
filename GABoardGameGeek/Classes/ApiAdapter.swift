@@ -29,22 +29,22 @@ internal class ApiAdapter {
                                                        params: [String: String],
                                                        rootElement: String, childElement: String,
                                                        retryUntil: NSDate = NSDate(),
-                                                       closure: ApiResult<[T]> -> ()) {
+                                                       closure: @escaping (ApiResult<[T]>) -> ()) {
         // Make the raw request, and handle the result
-        requestDataOnce(url, params: params) { result in
+        requestDataOnce(baseUrl: url, params: params) { result in
             switch(result) {
             case .Success(let xmlString):
-                closure(self.parse(xmlString, rootElement: rootElement, childElement: childElement))
+                closure(self.parse(xml: xmlString, rootElement: rootElement, childElement: childElement))
             case .Failure(let error):
                 switch(error) {
                 case .ServerNotReady:
                     // In some cases (collection requests), a 202 status code means we should try again,
                     // so queue up a retry to happen in one second, as long as we're still below the timeout.
-                    if( (NSDate().compare(retryUntil) == NSComparisonResult.OrderedAscending) ) {
-                        let delay = dispatch_time(DISPATCH_TIME_NOW, Int64(1.0 * Double(NSEC_PER_SEC)))
-                        dispatch_after(delay, dispatch_get_main_queue()) {
-                            self.request(url, params: params, rootElement: rootElement, childElement: childElement, retryUntil: retryUntil, closure: closure)
-                        }
+                    if( (NSDate().compare(retryUntil as Date) == ComparisonResult.orderedAscending) ) {
+                        let delay = UInt64(1.0 * Double(NSEC_PER_SEC))
+                        DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: delay), execute: {
+                            self.request(url: url, params: params, rootElement: rootElement, childElement: childElement, retryUntil: retryUntil, closure: closure)
+                        })
                     }
                     else {
                         closure(.Failure(error))
@@ -66,13 +66,13 @@ internal class ApiAdapter {
      - parameter params:  The parameters to make the call on. These should be URL Query Encoded already
      - parameter closure: The closure to call with the response
      */
-    private func requestDataOnce(baseUrl: String, params: [String: String], closure: ApiResult<String> -> ()) {
-        Alamofire.request(.GET, baseUrl, parameters: params)
+    private func requestDataOnce(baseUrl: String, params: [String: String], closure: @escaping (ApiResult<String>) -> ()) {
+        Alamofire.request(baseUrl, method: .get, parameters: params)
             .validate(statusCode: 200...202)
             .validate(contentType: ["text/xml"])
             .responseString { response in
                 switch response.result {
-                case .Success:
+                case .success:
                     if let statusCode = response.response?.statusCode {
                         if( statusCode == 202 ) {
                             closure(.Failure(.ServerNotReady))
@@ -80,7 +80,7 @@ internal class ApiAdapter {
                             closure(.Success(response.result.value!))
                         }
                     }
-                case .Failure(let error):
+                case .failure(let error):
                     closure(.Failure(.ConnectionError(error)))
                 }
         }
@@ -106,7 +106,7 @@ internal class ApiAdapter {
             let xmlIndexer = SWXMLHash.parse(xml)
 
             // Check for errors before we attempt to parse out any actual data
-            if let error = checkForApiError(xmlIndexer) {
+            if let error = checkForApiError(indexer: xmlIndexer) {
                 return .Failure(error)
             }
 
@@ -120,7 +120,7 @@ internal class ApiAdapter {
             // we built
             return .Success(retVal)
         } catch {
-            return .Failure(handleXmlError(error))
+            return .Failure(handleXmlError(error: error))
         }
     }
 
@@ -155,11 +155,11 @@ internal class ApiAdapter {
 
      - returns: The XML Error
      */
-    private func handleXmlError(error: ErrorType) -> BggError {
+    private func handleXmlError(error: Error) -> BggError {
         switch error {
-        case XMLDeserializationError.NodeIsInvalid(let node):
+        case XMLDeserializationError.nodeIsInvalid(let node):
             return .XmlError("Node Is Invalid: \(node)")
-        case XMLDeserializationError.TypeConversionFailed(let type, let element):
+        case XMLDeserializationError.typeConversionFailed(let type, let element):
             return .XmlError("Could Not Deserialize \(type): \(element)")
         default:
             return .XmlError("Unhandled Error: \(error)")

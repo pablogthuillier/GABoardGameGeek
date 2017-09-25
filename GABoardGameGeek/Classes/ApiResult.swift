@@ -69,7 +69,7 @@ public enum ApiResult<Value> {
 /**
  An enumeration to hold a more detailed description of an error when an API call fails.
  */
-public enum BggError: ErrorType, Equatable {
+public enum BggError: Error, Equatable {
 
     /**
      There were network connectivity errors. The Network or Server may be down, or responding with
@@ -77,7 +77,7 @@ public enum BggError: ErrorType, Equatable {
 
      - returns: an `NSError` containing additional details from the Network Request
      */
-    case ConnectionError(NSError)
+    case ConnectionError(Error)
 
     /**
      The server is not ready, and has returned a 202 HTTP Status Code, indictaing that it has
@@ -112,7 +112,7 @@ public enum BggError: ErrorType, Equatable {
 public func ==(a: BggError, b: BggError) -> Bool {
     switch(a, b) {
     case(.ConnectionError(let a), .ConnectionError(let b)):
-        return a == b
+        return a.localizedDescription == b.localizedDescription
     case(.ServerNotReady, .ServerNotReady):
         return true
     case(.ApiError(let a), .ApiError(let b)):

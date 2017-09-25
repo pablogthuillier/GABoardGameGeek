@@ -30,22 +30,22 @@ extension SearchResult: XMLIndexerDeserializable {
      */
     public static func deserialize(node: XMLIndexer) throws -> SearchResult {
         guard node.element != nil && node["name"].element != nil else {
-            throw XMLDeserializationError.NodeIsInvalid(node: node)
+            throw XMLDeserializationError.nodeIsInvalid(node: node)
         }
 
         do {
             return try SearchResult(
-                itemType: node.element!.attribute("type"),
-                objectId: node.element!.attribute("id"),
-                nameType: node["name"].element!.attribute("type"),
-                name: node["name"].element!.attribute("value"),
-                yearPublished: node["yearpublished"].element?.attribute("value")
+                itemType: node.element!.attribute(attribute: "type"),
+                objectId: node.element!.attribute(attribute: "id"),
+                nameType: node["name"].element!.attribute(attribute: "type"),
+                name: node["name"].element!.attribute(attribute: "value"),
+                yearPublished: node["yearpublished"].element?.attribute(attribute: "value")
             )
         } catch {
             // If any errors occur while parsing this game, throw them as a single exception along
             // with the XML that the game deserializes from. This makes it much easier to track down
             // which particular field might be failing.
-            throw XMLDeserializationError.TypeConversionFailed(type: "SearchResult", element: node.element!)
+            throw XMLDeserializationError.typeConversionFailed(type: "SearchResult", element: node.element!)
         }
     }
 }
